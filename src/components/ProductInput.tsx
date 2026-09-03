@@ -5,13 +5,14 @@ import { Search } from 'lucide-react';
 import { searchProducts } from '@/lib/products';
 import { Product } from '@/lib/types';
 import { useI18n } from '@/lib/I18nContext';
+import { productName } from '@/lib/recipeTranslations';
 
 interface Props {
   onSelect: (product: Product) => void;
 }
 
 export default function ProductInput({ onSelect }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function ProductInput({ onSelect }: Props) {
 
   useEffect(() => {
     if (query.length > 0) {
-      const r = searchProducts(query);
+      const r = searchProducts(query, locale);
       setResults(r);
       setOpen(r.length > 0);
     } else {
@@ -64,7 +65,7 @@ export default function ProductInput({ onSelect }: Props) {
               className="w-full px-4 py-3 text-left text-[13px] sm:text-[14px] hover:bg-[#fafafa] transition-colors flex items-center justify-between group border-b border-black/[0.03] last:border-0"
             >
               <div>
-                <span className="font-medium text-[#0a0a0a]">{p.name}</span>
+                <span className="font-medium text-[#0a0a0a]">{productName(p.name, locale)}</span>
                 <span className="text-neutral-300 text-[12px] ml-2 font-light">
                   {p.calories_per_100g} kcal/100{p.default_unit}
                 </span>

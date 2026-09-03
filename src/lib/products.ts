@@ -1,4 +1,6 @@
 import { Product } from './types';
+import { Locale } from './translations';
+import { productName } from './recipeTranslations';
 
 export const productsDatabase: Product[] = [
   // М'ясо та птиця
@@ -104,10 +106,12 @@ export const productsDatabase: Product[] = [
   { id: 'frozen_berries', name: 'Заморожені ягоди', calories_per_100g: 45, protein: 0.8, fat: 0.4, carbs: 11, default_unit: 'г' },
 ];
 
-export function searchProducts(query: string): Product[] {
+export function searchProducts(query: string, locale: Locale = 'uk'): Product[] {
   const lower = query.toLowerCase().trim();
   if (!lower) return [];
-  return productsDatabase.filter(p =>
-    p.name.toLowerCase().includes(lower)
-  ).slice(0, 8);
+  return productsDatabase.filter(p => {
+    const ua = p.name.toLowerCase();
+    const de = productName(p.name, 'de').toLowerCase();
+    return ua.includes(lower) || de.includes(lower);
+  }).slice(0, 8);
 }

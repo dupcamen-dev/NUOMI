@@ -3,6 +3,7 @@
 import { ShoppingBag, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useI18n } from '@/lib/I18nContext';
+import { productName } from '@/lib/recipeTranslations';
 
 interface ShoppingItem {
   product_name: string;
@@ -15,11 +16,11 @@ interface Props {
 }
 
 export default function ShoppingList({ items }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const text = items.map(i => `${i.product_name} — ${i.quantity} ${i.unit}`).join('\n');
+    const text = items.map(i => `${productName(i.product_name, locale)} — ${i.quantity} ${i.unit}`).join('\n');
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -51,7 +52,7 @@ export default function ShoppingList({ items }: Props) {
               key={i}
               className="flex items-center justify-between py-2.5 px-4 sm:px-6 text-[13px] sm:text-[14px] animate-fade-in"
             >
-              <span className="font-light">{item.product_name}</span>
+              <span className="font-light">{productName(item.product_name, locale)}</span>
               <span className="text-neutral-400 font-light">{item.quantity} {item.unit}</span>
             </div>
           ))}

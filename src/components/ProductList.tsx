@@ -2,6 +2,8 @@
 
 import { X } from 'lucide-react';
 import { UserProduct } from '@/lib/types';
+import { useI18n } from '@/lib/I18nContext';
+import { productName } from '@/lib/recipeTranslations';
 
 interface Props {
   products: UserProduct[];
@@ -13,6 +15,7 @@ interface Props {
 const UNITS = ['г', 'кг', 'шт', 'мл'];
 
 export default function ProductList({ products, onRemove, onUpdateQuantity, onUpdateUnit }: Props) {
+  const { locale } = useI18n();
   if (products.length === 0) return null;
 
   return (
@@ -23,7 +26,7 @@ export default function ProductList({ products, onRemove, onUpdateQuantity, onUp
           className={`flex items-center gap-2 py-2.5 px-3 bg-[#fafafa] border border-black/[0.04] rounded-xl animate-fade-in transition-colors hover:border-black/[0.08] stagger-${Math.min(i + 1, 7)}`}
         >
           <span className="text-[13px] sm:text-[14px] font-medium flex-1 min-w-0 truncate text-[#0a0a0a]">
-            {up.product.name}
+            {productName(up.product.name, locale)}
           </span>
           <div className="flex items-center gap-1 flex-shrink-0">
             <input

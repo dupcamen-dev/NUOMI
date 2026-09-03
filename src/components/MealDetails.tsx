@@ -4,7 +4,7 @@ import { Meal } from '@/lib/types';
 import { X, Clock } from 'lucide-react';
 import { DRY_WEIGHT_PRODUCTS, PANTRY_STAPLES } from '@/lib/algorithm';
 import { useI18n } from '@/lib/I18nContext';
-import { recipeName } from '@/lib/recipeTranslations';
+import { recipeName, productName, recipeInstructions } from '@/lib/recipeTranslations';
 
 interface Props {
   meal: Meal;
@@ -75,7 +75,7 @@ export default function MealDetails({ meal, userProductNames, onClose }: Props) 
                   }`}
                 >
                   <span className="font-light">
-                    {ing.product_name}
+                    {productName(ing.product_name, locale)}
                     {DRY_WEIGHT_PRODUCTS.has(ing.product_name) && (
                       <span className="text-[10px] sm:text-[11px] text-neutral-400 ml-1">{t('detail.dry')}</span>
                     )}
@@ -95,7 +95,7 @@ export default function MealDetails({ meal, userProductNames, onClose }: Props) 
             {t('detail.cooking')}
           </h4>
           <p className="text-[13px] sm:text-[14px] leading-relaxed text-neutral-500 font-light">
-            {meal.recipe.instructions}
+            {recipeInstructions(meal.recipe.id, locale, meal.recipe.instructions)}
           </p>
         </div>
       </div>

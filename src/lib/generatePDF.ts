@@ -1,6 +1,6 @@
 import { WeeklyMenu, UserProduct } from './types';
 import { Locale } from './translations';
-import { recipeName, dayName } from './recipeTranslations';
+import { recipeName, dayName, productName } from './recipeTranslations';
 
 const MEAL_TYPE_LABELS: Record<Locale, Record<string, string>> = {
   uk: { breakfast: 'Сніданок', lunch: 'Обід', snack: 'Перекус', dinner: 'Вечеря' },
@@ -55,7 +55,7 @@ function buildMenuHTML(
   html += `<h2 style="font-size: 16px; margin: 0 0 12px 0;">${txt.products}</h2>`;
   html += `<div style="margin-bottom: 24px; font-size: 13px; color: #555;">`;
   userProducts.forEach(p => {
-    html += `<span style="display: inline-block; background: #f5f5f5; border-radius: 6px; padding: 4px 10px; margin: 0 6px 6px 0;">${p.product.name} — ${p.quantity} ${p.unit}</span>`;
+    html += `<span style="display: inline-block; background: #f5f5f5; border-radius: 6px; padding: 4px 10px; margin: 0 6px 6px 0;">${productName(p.product.name, locale)} — ${p.quantity} ${p.unit}</span>`;
   });
   html += `</div>`;
 
@@ -75,7 +75,7 @@ function buildMenuHTML(
           </div>
           <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">${dishName}</div>
           <div style="font-size: 11px; color: #737373;">
-            ${meal.ingredients_used.map(i => `${i.product_name} ${i.quantity}${i.unit}`).join(' · ')}
+            ${meal.ingredients_used.map(i => `${productName(i.product_name, locale)} ${i.quantity}${i.unit}`).join(' · ')}
           </div>
           <div style="font-size: 11px; color: #999; margin-top: 4px;">
             ${txt.protein} ${meal.actual_protein}г · ${txt.fat} ${meal.actual_fat}г · ${txt.carbs} ${meal.actual_carbs}г
@@ -98,7 +98,7 @@ function buildMenuHTML(
     menu.shopping_list.forEach(item => {
       html += `
         <div style="display: flex; justify-content: space-between; padding: 6px 12px; background: #fffbeb; border-radius: 6px; border: 1px solid #fde68a; margin-bottom: 6px; font-size: 13px;">
-          <span>${item.product_name}</span>
+          <span>${productName(item.product_name, locale)}</span>
           <span style="color: #92400e;">${item.quantity} ${item.unit}</span>
         </div>
       `;

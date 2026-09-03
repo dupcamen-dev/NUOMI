@@ -61,6 +61,67 @@ export function recipeName(id: string, locale: Locale, fallback: string): string
   return RECIPE_NAMES[id]?.[locale] || fallback;
 }
 
+const RECIPE_INSTRUCTIONS_DE: Record<string, string> = {
+  omelet_veggies: 'Eier mit Salz verquirlen. Gemüse schneiden. Gemüse in Öl anbraten, mit den Eiern übergießen und bei mittlerer Hitze 5-7 Minuten garen.',
+  oatmeal_banana: 'Haferflocken in Milch kochen. Geschnittene Banane und Honig hinzufügen.',
+  scrambled_eggs: 'Eier verquirlen. Brot in Butter goldbraun braten, mit den Eiern übergießen und fertig garen.',
+  cottage_cheese_bowl: 'Quark in eine Schüssel geben. Geschnittene Erdbeeren hinzufügen, mit Honig beträufeln und mit Chiasamen bestreuen.',
+  avocado_toast: 'Brot rösten. Avocado zerdrücken und auf den Toast geben. Eier weich kochen und darauflegen.',
+  yogurt_oats: 'Joghurt mit Haferflocken mischen. Apfel schneiden und mit Nüssen bestreuen.',
+  pancakes: 'Teig aus Eiern und Milch zubereiten. Pfannkuchen ausbacken und mit vermischtem Quark füllen.',
+  chicken_rice_veggies: 'Reis kochen. Hähnchen mit Öl und Gewürzen anbraten. Mit gedämpftem Brokkoli servieren.',
+  buckwheat_chicken: 'Buchweizen kochen. Hähnchen mit Zwiebel und Karotte anbraten. Zusammen servieren.',
+  pasta_turkey: 'Nudeln kochen. Pute mit Zwiebel und Knoblauch anbraten, geschnittene Tomaten dazugeben. Mit Nudeln mischen.',
+  salmon_quinoa: 'Quinoa kochen. Lachs mit Zitrone im Ofen garen. Mit Spinat servieren.',
+  lentil_soup: 'Zwiebel und Karotte anbraten. Linsen und Tomaten dazugeben. Kochen, bis die Linsen gar sind.',
+  tuna_salad: 'Eier kochen. Salatblätter mit geschnittenen Tomaten und Eiern mischen. Thunfisch dazugeben und mit Öl anmachen.',
+  chickpea_bowl: 'Kichererbsen mit Gewürzen anbraten. Gemüse schneiden. Alles in eine Bowl geben, Avocado und Öl hinzufügen.',
+  cottage_cheese_fruit: 'Quark in eine Schüssel geben, geschnittene Banane und Honig hinzufügen.',
+  apple_peanut_butter: 'Apfel in Scheiben schneiden. Mit Erdnussbutter servieren.',
+  yogurt_nuts: 'Joghurt in eine Schüssel geben und mit gehackten Nüssen bestreuen.',
+  banana_smoothie: 'Banane, Milch und Honig im Mixer glatt mixen.',
+  cheese_crackers: 'Käse in Scheiben schneiden. Mit Brot servieren.',
+  hummus_veggies: 'Kichererbsen mit Öl und Knoblauch zu einer cremigen Masse mixen. Mit geschnittener Karotte servieren.',
+  berries_yogurt: 'Joghurt anrichten, Beeren und Chiasamen dazugeben.',
+  chicken_veggies_dinner: 'Hähnchen und Gemüse schneiden. Auf dem Grill mit Öl und Gewürzen braten.',
+  buckwheat_dinner: 'Buchweizen kochen. Gemüse anbraten. Alles mischen.',
+  fish_stew: 'Zwiebel und Paprika anbraten. Fisch und Tomaten dazugeben. 15 Minuten schmoren.',
+  omelet_dinner: 'Eier mit geschnittenem Käse und Spinat verquirlen. In Butter garen.',
+  sweet_potato_chicken: 'Süßkartoffel im Ofen backen. Hähnchen anbraten. Mit Brokkoli servieren.',
+  egg_salad_dinner: 'Eier kochen. Avocado und Tomaten schneiden. Mit Salat mischen und mit Öl anmachen.',
+  simple_omelet: 'Eier mit Salz verquirlen. Bei mittlerer Hitze in Öl 5-7 Minuten braten.',
+  omelet_cheese: 'Eier verquirlen. Käse reiben. Omelett braten, mit Käse bestreuen und zusammenklappen.',
+  omelet_pepper: 'Paprika schneiden. 2 Minuten anbraten. Mit verquirlten Eiern übergießen und 5-7 Minuten garen.',
+  scrambled_eggs_cheese: 'Eier verquirlen. Bei schwacher Hitze in Butter unter Rühren garen. Geriebenen Käse hinzufügen.',
+  rice_breakfast: 'Reisbrei in Wasser kochen. Butter hinzufügen. Mit Quark servieren.',
+  buckwheat_simple: 'Buchweizen kochen. Zwiebel in Öl anbraten. Mit Buchweizen mischen.',
+  buckwheat_cheese: 'Buchweizen kochen. Butter und geriebenen Käse hinzufügen und umrühren.',
+  buckwheat_veggies: 'Buchweizen kochen. Zwiebel und Karotte anbraten, Paprika dazugeben. Mit Buchweizen mischen.',
+  pasta_cheese: 'Nudeln kochen. Butter und geriebenen Käse zur heißen Pasta geben und umrühren.',
+  pasta_pepper: 'Nudeln kochen. Zwiebel und geschnittene Paprika anbraten. Mit Nudeln mischen.',
+  pasta_cheese_pepper: 'Nudeln kochen. Paprika anbraten. Nudeln mit Paprika und geriebenem Käse mischen.',
+  rice_veggies: 'Reis kochen. Zwiebel, Karotte und Paprika anbraten. Mit Reis mischen.',
+  rice_cheese: 'Reis kochen. Butter und geriebenen Käse hinzufügen und umrühren.',
+  egg_rice: 'Reis kochen. Eier als Rührei braten. Reis mit Ei und Paprika mischen.',
+  egg_buckwheat: 'Buchweizen kochen. Eier braten. Eier auf den Buchweizen legen.',
+  cheese_plate: 'Käse und Paprika in Scheiben schneiden.',
+  egg_snack: 'Eier weich kochen (8-10 Minuten). Abkühlen lassen.',
+  carrot_snack: 'Karotte schneiden. Mit Käse servieren.',
+  omelet_dinner_simple: '4 Eier verquirlen. Bei mittlerer Hitze in Öl fertig braten.',
+  egg_pepper_dinner: 'Paprika anbraten. Mit Eiern übergießen und mit Käse bestreuen. Mit Deckel garen.',
+  pasta_egg_dinner: 'Nudeln kochen. Heiße Nudeln mit Ei, Butter und geriebenem Käse mischen.',
+  buckwheat_egg_dinner: 'Buchweizen kochen. Gemüse anbraten. Rührei zubereiten. Alles vermengen.',
+  rice_cheese_dinner: 'Reis kochen. Gemüse anbraten. Mit geriebenem Käse mischen.',
+  pasta_veggie_dinner: 'Nudeln kochen. Gemüse anbraten. Alles mischen.',
+  egg_veggie_dinner: 'Gemüse anbraten. Mit Eiern übergießen und fertig garen.',
+  buckwheat_pasta_mix: 'Buchweizen und Nudeln kochen. Mit Butter und geriebenem Käse mischen.',
+};
+
+export function recipeInstructions(id: string, locale: Locale, fallback: string): string {
+  if (locale === 'uk') return fallback;
+  return RECIPE_INSTRUCTIONS_DE[id] || fallback;
+}
+
 // Maps the Ukrainian full day name (as stored in menu data) to a locale name.
 const DAY_NAMES: Record<Locale, Record<string, string>> = {
   uk: {
@@ -85,4 +146,106 @@ const DAY_NAMES: Record<Locale, Record<string, string>> = {
 
 export function dayName(day: string, locale: Locale): string {
   return DAY_NAMES[locale][day] || day;
+}
+
+const PRODUCT_NAMES_DE: Record<string, string> = {
+  // М'ясо та птиця
+  'Куряче філе': 'Hähnchenbrust',
+  'Куряче стегно': 'Hähnchenschenkel',
+  'Курка ціла': 'Ganzes Hähnchen',
+  'Індичка': 'Putenbrust',
+  'Свиняча вирізка': 'Schweinefilet',
+  // Риба та морепродукти
+  'Лосось': 'Lachs',
+  'Тунець': 'Thunfisch',
+  'Треска': 'Kabeljau',
+  'Креветки': 'Garnelen',
+  // Молочні продукти
+  'Молоко': 'Milch',
+  'Кефір': 'Kefir',
+  'Сир (творог)': 'Quark',
+  'Твердий сир': 'Hartkäse',
+  'Сир кремовий': 'Frischkäse',
+  'Йогурт': 'Joghurt',
+  'Масло вершкове': 'Butter',
+  'Сметана': 'Saure Sahne',
+  // Яйця
+  'Яйця': 'Eier',
+  // Крупи та зернові
+  'Рис': 'Reis',
+  'Гречка': 'Buchweizen',
+  'Вівсянка': 'Haferflocken',
+  'Макарони': 'Nudeln',
+  'Кіноа': 'Quinoa',
+  'Булгур': 'Bulgur',
+  'Кускус': 'Couscous',
+  'Пшоно': 'Hirse',
+  // Бобові
+  'Чечевиця': 'Linsen',
+  'Нут': 'Kichererbsen',
+  'Квасоля': 'Bohnen',
+  // Овочі
+  'Картопля': 'Kartoffeln',
+  'Батат': 'Süßkartoffel',
+  'Помідори': 'Tomaten',
+  'Огірки': 'Gurken',
+  'Морква': 'Karotten',
+  'Цибуля': 'Zwiebel',
+  'Часник': 'Knoblauch',
+  'Броколі': 'Brokkoli',
+  'Цвітна капуста': 'Blumenkohl',
+  'Капуста': 'Kohl',
+  'Болгарський перець': 'Paprika',
+  'Кабачок': 'Zucchini',
+  'Баклажан': 'Aubergine',
+  'Шпинат': 'Spinat',
+  'Салат (листи)': 'Blattsalat',
+  'Кукурудза': 'Mais',
+  'Горошок': 'Erbsen',
+  // Фрукти
+  'Банани': 'Bananen',
+  'Яблуко': 'Apfel',
+  'Апельсин': 'Orange',
+  'Авокадо': 'Avocado',
+  'Виноград': 'Trauben',
+  'Полуниця': 'Erdbeeren',
+  'Чорниця': 'Blaubeeren',
+  'Ківі': 'Kiwi',
+  'Лимон': 'Zitrone',
+  // Горіхи та насіння
+  'Миндаль': 'Mandeln',
+  'Горіхи волоські': 'Walnüsse',
+  'Арахіс': 'Erdnüsse',
+  'Насіння соняшника': 'Sonnenblumenkerne',
+  'Насіння чіа': 'Chiasamen',
+  'Насіння льону': 'Leinsamen',
+  'Насіння конопель': 'Hanfsamen',
+  // Хліб та випічка
+  'Хліб білий': 'Weißbrot',
+  'Хліб цільнозерновий': 'Vollkornbrot',
+  'Лаваш': 'Fladenbrot',
+  'Хліб вівсяний': 'Haferbrot',
+  // Готові продукти та соуси
+  'Оливкова олія': 'Olivenöl',
+  'Соняшникова олія': 'Sonnenblumenöl',
+  'Соєвий соус': 'Sojasoße',
+  'Мед': 'Honig',
+  'Цукор': 'Zucker',
+  'Арахісова паста': 'Erdnussbutter',
+  // Напої
+  'Сік апельсиновий': 'Orangensaft',
+  'Зелений чай': 'Grüner Tee',
+  'Кава': 'Kaffee',
+  // Заморожені
+  'Заморожені овочі': 'Tiefkühlgemüse',
+  'Заморожені ягоди': 'Tiefkühlbeeren',
+  // Спеції та інше
+  'Сіль': 'Salz',
+  'Перець': 'Pfeffer',
+  'Спеції': 'Gewürze',
+};
+
+export function productName(name: string, locale: Locale): string {
+  if (locale === 'uk') return name;
+  return PRODUCT_NAMES_DE[name] || name;
 }

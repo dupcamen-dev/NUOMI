@@ -2,7 +2,7 @@
 
 import { Meal } from '@/lib/types';
 import { useI18n } from '@/lib/I18nContext';
-import { recipeName } from '@/lib/recipeTranslations';
+import { recipeName, productName } from '@/lib/recipeTranslations';
 
 interface Props {
   meal: Meal;
@@ -50,7 +50,7 @@ export default function MealCard({ meal, mealTypeLabel, missingIngredients, onCl
       {missingIngredients.length > 0 && (
         <div className="mt-3 sm:mt-4 px-3.5 sm:px-4 py-2 bg-amber-50/60 border border-amber-100 rounded-xl">
           <span className="text-[11px] sm:text-[12px] text-amber-700 font-light">
-            {t('missing.prefix')} <span className="font-medium">{missingIngredients.join(', ')}</span>
+            {t('missing.prefix')} <span className="font-medium">{missingIngredients.map(i => productName(i, locale)).join(', ')}</span>
           </span>
         </div>
       )}
