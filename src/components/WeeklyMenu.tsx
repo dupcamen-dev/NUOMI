@@ -10,6 +10,7 @@ import ShoppingList from './ShoppingList';
 import { PANTRY_STAPLES } from '@/lib/algorithm';
 import { downloadMenuPDF } from '@/lib/generatePDF';
 import { useI18n } from '@/lib/I18nContext';
+import { dayName } from '@/lib/recipeTranslations';
 
 interface Props {
   menu: WeeklyMenuType;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 export default function WeeklyMenu({ menu, dailyCalories, userProducts }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [activeDay, setActiveDay] = useState(0);
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null);
 
@@ -66,7 +67,7 @@ export default function WeeklyMenu({ menu, dailyCalories, userProducts }: Props)
         </div>
 
         <div className="mb-2 animate-fade-in">
-          <h3 className="text-[14px] sm:text-[15px] font-medium text-neutral-400 mb-3 sm:mb-4">{day.day}</h3>
+          <h3 className="text-[14px] sm:text-[15px] font-medium text-neutral-400 mb-3 sm:mb-4">{dayName(day.day, locale)}</h3>
           <div className="space-y-2.5 sm:space-y-3">
             {day.meals.map((meal, i) => {
               const missingIngredients = meal.recipe.ingredients.filter(
@@ -106,7 +107,7 @@ export default function WeeklyMenu({ menu, dailyCalories, userProducts }: Props)
 
         <div className="flex justify-center mt-8 sm:mt-10 animate-fade-in">
           <button
-            onClick={() => downloadMenuPDF(menu, dailyCalories, userProducts)}
+            onClick={() => downloadMenuPDF(menu, dailyCalories, userProducts, locale)}
             className="flex items-center gap-2 text-[13px] sm:text-[14px] font-light text-neutral-500 hover:text-black transition-colors group"
           >
             <Download size={14} strokeWidth={1.5} className="transition-transform group-hover:translate-y-0.5" />

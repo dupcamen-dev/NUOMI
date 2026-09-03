@@ -4,6 +4,7 @@ import { Meal } from '@/lib/types';
 import { X, Clock } from 'lucide-react';
 import { DRY_WEIGHT_PRODUCTS, PANTRY_STAPLES } from '@/lib/algorithm';
 import { useI18n } from '@/lib/I18nContext';
+import { recipeName } from '@/lib/recipeTranslations';
 
 interface Props {
   meal: Meal;
@@ -12,7 +13,8 @@ interface Props {
 }
 
 export default function MealDetails({ meal, userProductNames, onClose }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const dishName = recipeName(meal.recipe.id, locale, meal.recipe.name);
 
   const MEAL_TYPE_LABELS: Record<string, string> = {
     breakfast: t('meal.breakfast'),
@@ -36,7 +38,7 @@ export default function MealDetails({ meal, userProductNames, onClose }: Props) 
           <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.08em] text-neutral-400 font-medium">
             {MEAL_TYPE_LABELS[meal.recipe.meal_type] || meal.recipe.meal_type}
           </span>
-          <h3 className="text-[19px] sm:text-[22px] font-medium tracking-[-0.02em] pr-10 mt-1">{meal.recipe.name}</h3>
+          <h3 className="text-[19px] sm:text-[22px] font-medium tracking-[-0.02em] pr-10 mt-1">{dishName}</h3>
           <div className="flex items-center gap-1.5 mt-2 text-[11px] sm:text-[12px] text-neutral-400 font-light">
             <Clock size={12} strokeWidth={1.5} />
             <span>{meal.recipe.prep_time} {t('detail.time')}</span>

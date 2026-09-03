@@ -63,6 +63,14 @@ export const translations: Record<Locale, Record<string, string>> = {
     'meal.lunch': 'Обід',
     'meal.snack': 'Перекус',
     'meal.dinner': 'Вечеря',
+    // Days
+    'day.monday': 'Понеділок',
+    'day.tuesday': 'Вівторок',
+    'day.wednesday': 'Середа',
+    'day.thursday': 'Четвер',
+    'day.friday': "П'ятниця",
+    'day.saturday': 'Субота',
+    'day.sunday': 'Неділя',
     // Meal details
     'detail.time': 'хв',
     'detail.calories': 'Калорії',
@@ -156,6 +164,14 @@ export const translations: Record<Locale, Record<string, string>> = {
     'meal.lunch': 'Mittagessen',
     'meal.snack': 'Snack',
     'meal.dinner': 'Abendessen',
+    // Days
+    'day.monday': 'Montag',
+    'day.tuesday': 'Dienstag',
+    'day.wednesday': 'Mittwoch',
+    'day.thursday': 'Donnerstag',
+    'day.friday': 'Freitag',
+    'day.saturday': 'Samstag',
+    'day.sunday': 'Sonntag',
     // Meal details
     'detail.time': 'Min',
     'detail.calories': 'Kalorien',

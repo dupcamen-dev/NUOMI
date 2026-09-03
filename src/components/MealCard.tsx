@@ -2,6 +2,7 @@
 
 import { Meal } from '@/lib/types';
 import { useI18n } from '@/lib/I18nContext';
+import { recipeName } from '@/lib/recipeTranslations';
 
 interface Props {
   meal: Meal;
@@ -18,11 +19,12 @@ const MEAL_ICONS: Record<string, string> = {
 };
 
 export default function MealCard({ meal, mealTypeLabel, missingIngredients, onClick }: Props) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const proteinLabel = t('detail.protein');
   const fatLabel = t('detail.fat');
   const carbsLabel = t('detail.carbs');
+  const dishName = recipeName(meal.recipe.id, locale, meal.recipe.name);
 
   return (
     <button
@@ -34,7 +36,7 @@ export default function MealCard({ meal, mealTypeLabel, missingIngredients, onCl
           <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.08em] text-neutral-400 font-medium">
             {mealTypeLabel}
           </span>
-          <h4 className="text-[15px] sm:text-[17px] font-medium mt-1 tracking-[-0.01em]">{meal.recipe.name}</h4>
+          <h4 className="text-[15px] sm:text-[17px] font-medium mt-1 tracking-[-0.01em]">{dishName}</h4>
         </div>
         <span className="text-base sm:text-lg mt-1 opacity-70">{MEAL_ICONS[meal.recipe.meal_type] || '🍽'}</span>
       </div>

@@ -25,6 +25,7 @@ export interface RecipeIngredient {
 export interface Recipe {
   id: string;
   name: string;
+  name_de?: string;
   meal_type: 'breakfast' | 'lunch' | 'snack' | 'dinner';
   calories: number;
   protein: number;
@@ -33,6 +34,7 @@ export interface Recipe {
   ingredients: RecipeIngredient[];
   prep_time: number;
   instructions: string;
+  instructions_de?: string;
   required_products: string[];
 }
 
