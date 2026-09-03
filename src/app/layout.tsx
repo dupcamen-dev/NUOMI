@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     "Wochenplan", "Mahlzeitenplanung", "Kalorienrechner",
   ],
   authors: [{ name: "Nouri" }],
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
     type: "website",
     locale: "uk_UK",
@@ -46,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <meta name="theme-color" content="#fafafa" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

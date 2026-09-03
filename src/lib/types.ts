@@ -24,6 +24,7 @@ export interface RecipeIngredient {
 
 export interface Recipe {
   id: string;
+  image?: string;
   name: string;
   meal_type: 'breakfast' | 'lunch' | 'snack' | 'dinner';
   calories: number;
