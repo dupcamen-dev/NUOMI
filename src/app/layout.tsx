@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nouri-normal.vercel.app"),
   title: "Nouri — Скласти меню з того, що є",
   description: "Введи продукти з холодильника, вкажи калорії — отримай готове меню на тиждень. Без підрахунків та планування.",
   keywords: [
@@ -31,11 +32,13 @@ export const metadata: Metadata = {
     siteName: "Nouri",
     title: "Nouri — Скласти меню з того, що є",
     description: "Введи продукти з холодильника, вкажи калорії — отримай готове меню на тиждень.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Nouri — Скласти меню з того, що є" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Nouri — Скласти меню з того, що є",
     description: "Введи продукти з холодильника, вкажи калорії — отримай готове меню на тиждень.",
+    images: ["/og.png"],
   },
   robots: { index: true, follow: true },
 };
