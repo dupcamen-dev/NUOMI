@@ -55,6 +55,11 @@ export const RECIPE_NAMES: Record<string, Record<Locale, string>> = {
   pasta_veggie_dinner: { uk: 'Паста з овочами', de: 'Pasta mit Gemüse' },
   egg_veggie_dinner: { uk: 'Яйця з овочами як гарнір', de: 'Eier mit Gemüse als Beilage' },
   buckwheat_pasta_mix: { uk: 'Гречка з макаронами', de: 'Buchweizen mit Nudeln' },
+  spinach_feta_omelet: { uk: 'Омлет зі шпинатом і сиром фета', de: 'Spinat-Feta-Omelett' },
+  yogurt_berry_granola: { uk: 'Йогурт з ягодами та насінням', de: 'Joghurt mit Beeren und Samen' },
+  cod_rice_veggies: { uk: 'Треска з рисом та овочами', de: 'Kabeljau mit Reis und Gemüse' },
+  chicken_caesar_style: { uk: 'Курячий салат з йогуртовою заправкою', de: 'Hähnchensalat mit Joghurt-Dressing' },
+  bean_vegetable_stew: { uk: 'Тушкована квасоля з овочами', de: 'Geschmorte Bohnen mit Gemüse' },
 };
 
 export function recipeName(id: string, locale: Locale, fallback: string): string {
@@ -115,6 +120,11 @@ const RECIPE_INSTRUCTIONS_DE: Record<string, string> = {
   pasta_veggie_dinner: 'Nudeln kochen. Gemüse anbraten. Alles mischen.',
   egg_veggie_dinner: 'Gemüse anbraten. Mit Eiern übergießen und fertig garen.',
   buckwheat_pasta_mix: 'Buchweizen und Nudeln kochen. Mit Butter und geriebenem Käse mischen.',
+  spinach_feta_omelet: 'Eier mit Salz verquirlen. Spinat leicht anbraten, mit den Eiern übergießen und mit zerkrümeltem Käse bestreuen.',
+  yogurt_berry_granola: 'Joghurt in eine Schüssel geben, geschnittene Erdbeeren, Haferflocken und Chiasamen hinzufügen.',
+  cod_rice_veggies: 'Reis kochen. Kabeljau würzen und backen. Zucchini anbraten. Zusammen servieren.',
+  chicken_caesar_style: 'Hähnchen in Streifen braten. Salatblätter mit Tomaten und Hähnchen mischen. Mit Joghurt anmachen.',
+  bean_vegetable_stew: 'Zwiebel und Karotte anbraten. Bohnen und Tomaten dazugeben. 20 Minuten bei mittlerer Hitze schmoren.',
 };
 
 export function recipeInstructions(id: string, locale: Locale, fallback: string): string {
