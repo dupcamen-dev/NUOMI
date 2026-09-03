@@ -25,16 +25,20 @@ function HomeContent() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<WeeklyMenuType | null>(null);
   const [lastState, setLastState] = useState<GeneratorState | null>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
   const generatorRef = useRef<HTMLDivElement>(null);
+
+  const scrollToOutput = () => {
+    requestAnimationFrame(() => {
+      outputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
 
   const handleGenerate = useCallback((state: GeneratorState) => {
     setLastState(state);
     setResult(null);
     setLoading(true);
-    setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
+    scrollToOutput();
   }, []);
 
   const handleLoadingDone = useCallback(() => {
@@ -42,9 +46,8 @@ function HomeContent() {
       const menu = generateWeeklyMenu(lastState);
       setResult(menu);
       setLoading(false);
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      // Scroll after the result is rendered
+      setTimeout(scrollToOutput, 150);
     }
   }, [lastState]);
 
@@ -56,13 +59,13 @@ function HomeContent() {
         <MealGenerator onGenerate={handleGenerate} />
       </div>
 
-      {loading && <LoadingState onDone={handleLoadingDone} />}
+      <div ref={outputRef} className="scroll-mt-20">
+        {loading && <LoadingState onDone={handleLoadingDone} />}
 
-      {result && lastState && (
-        <div ref={resultsRef}>
+        {result && lastState && (
           <WeeklyMenu menu={result} dailyCalories={lastState.dailyCalories} userProducts={lastState.products} />
-        </div>
-      )}
+        )}
+      </div>
 
       <HowItWorks />
       <FinalCTA />
