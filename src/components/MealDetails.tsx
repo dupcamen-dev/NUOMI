@@ -4,8 +4,6 @@ import { Meal } from '@/lib/types';
 import { X, Clock } from 'lucide-react';
 import { DRY_WEIGHT_PRODUCTS, PANTRY_STAPLES } from '@/lib/algorithm';
 import { useI18n } from '@/lib/I18nContext';
-import { RECIPE_IMAGES } from '@/lib/recipeImages';
-import { useState } from 'react';
 
 interface Props {
   meal: Meal;
@@ -15,8 +13,6 @@ interface Props {
 
 export default function MealDetails({ meal, userProductNames, onClose }: Props) {
   const { t } = useI18n();
-  const [imgError, setImgError] = useState(false);
-  const image = RECIPE_IMAGES[meal.recipe.id];
 
   const MEAL_TYPE_LABELS: Record<string, string> = {
     breakfast: t('meal.breakfast'),
@@ -28,26 +24,15 @@ export default function MealDetails({ meal, userProductNames, onClose }: Props) 
   return (
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white w-full md:max-w-[480px] md:rounded-[24px] rounded-t-[24px] max-h-[85vh] overflow-y-auto animate-slide-up">
+      <div className="relative bg-white w-full md:max-w-[480px] md:rounded-[24px] rounded-t-[24px] p-5 sm:p-7 md:p-8 max-h-[85vh] overflow-y-auto animate-slide-up">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 p-2 text-white/90 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur rounded-full transition-colors"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-neutral-400 hover:text-black transition-colors rounded-full hover:bg-neutral-50"
         >
           <X size={17} strokeWidth={1.5} />
         </button>
 
-        {image && !imgError && (
-          <div className="h-40 sm:h-48 overflow-hidden bg-neutral-100 md:rounded-t-[24px] rounded-t-[24px]">
-            <img
-              src={image}
-              alt={meal.recipe.name}
-              onError={() => setImgError(true)}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        <div className="p-5 sm:p-7 md:p-8">
+        <div className="mb-5 sm:mb-6">
           <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.08em] text-neutral-400 font-medium">
             {MEAL_TYPE_LABELS[meal.recipe.meal_type] || meal.recipe.meal_type}
           </span>
