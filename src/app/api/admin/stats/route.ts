@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   return Response.json({
     ok: true,
-    storage: STORE_CONFIGURED ? 'upstash-redis' : 'memory',
+    storage: STORE_CONFIGURED ? 'postgres' : 'memory',
     stats: {
       activeVisitors: active,
       totalViews,
