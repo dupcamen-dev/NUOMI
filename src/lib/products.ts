@@ -38,6 +38,7 @@ export const productsDatabase: Product[] = [
   { id: 'bulgur', name: 'Булгур', calories_per_100g: 83, protein: 3, fat: 0.2, carbs: 18.6, default_unit: 'г' },
   { id: 'couscous', name: 'Кускус', calories_per_100g: 112, protein: 3.8, fat: 0.2, carbs: 23.2, default_unit: 'г' },
   { id: 'millet', name: 'Пшоно', calories_per_100g: 119, protein: 3.5, fat: 1, carbs: 23, default_unit: 'г' },
+  { id: 'flour', name: 'Борошно пшеничне', calories_per_100g: 340, protein: 10, fat: 1, carbs: 72, default_unit: 'г' },
 
   // Бобові
   { id: 'lentils', name: 'Чечевиця', calories_per_100g: 116, protein: 9, fat: 0.4, carbs: 20, default_unit: 'г' },

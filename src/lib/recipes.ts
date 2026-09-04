@@ -40,7 +40,7 @@ export const recipesDatabase: Recipe[] = [
   },
   {
     id: 'scrambled_eggs',
-    name: 'Яйця-млинці',
+    name: 'Грінки з яйцем',
     meal_type: 'breakfast',
     calories: 280,
     protein: 18,
@@ -119,11 +119,12 @@ export const recipesDatabase: Recipe[] = [
     ingredients: [
       { product_name: 'Яйця', quantity: 2, unit: 'шт' },
       { product_name: 'Молоко', quantity: 150, unit: 'мл' },
+      { product_name: 'Борошно пшеничне', quantity: 100, unit: 'г' },
       { product_name: 'Сир (творог)', quantity: 150, unit: 'г' },
       { product_name: 'Масло вершкове', quantity: 10, unit: 'г' },
     ],
     prep_time: 20,
-    instructions: 'Приготувати тісто з яєць та молока. Смажити млинці. Начинити змішаним сиром.',
+    instructions: 'Змішати борошно, молоко і яйця в однорідне тісто. Смажити тонкі млинці. Начинити змішаним з маслом сиром.',
     required_products: ['Яйця', 'Сир (творог)'],
   },
 
@@ -331,7 +332,7 @@ export const recipesDatabase: Recipe[] = [
   },
   {
     id: 'cheese_crackers',
-    name: 'Сир з хлібцями',
+    name: 'Сир зі хлібом',
     meal_type: 'snack',
     calories: 200,
     protein: 12,
@@ -549,7 +550,7 @@ export const recipesDatabase: Recipe[] = [
   },
   {
     id: 'scrambled_eggs_cheese',
-    name: 'Яйця пашот із сиром',
+    name: 'Скрамбл із сиром',
     meal_type: 'breakfast',
     calories: 290,
     protein: 22,
@@ -790,7 +791,7 @@ export const recipesDatabase: Recipe[] = [
       { product_name: 'Яйця', quantity: 3, unit: 'шт' },
     ],
     prep_time: 10,
-    instructions: 'Зварити яйця некруто (8-10 хвилин). Охолодити.',
+    instructions: 'Зварити яйця круто (8-10 хвилин). Охолодити.',
     required_products: ['Яйця'],
   },
   {
@@ -813,7 +814,7 @@ export const recipesDatabase: Recipe[] = [
   // Вечері
   {
     id: 'omelet_dinner_simple',
-    name: 'Великий омлет',
+    name: 'Омлет на вечерю',
     meal_type: 'dinner',
     calories: 350,
     protein: 26,
@@ -941,21 +942,22 @@ export const recipesDatabase: Recipe[] = [
   },
   {
     id: 'buckwheat_pasta_mix',
-    name: 'Гречка з макаронами',
+    name: 'Гречка з грибами і куркою',
     meal_type: 'dinner',
-    calories: 370,
-    protein: 12,
-    fat: 6,
-    carbs: 68,
+    calories: 470,
+    protein: 36,
+    fat: 12,
+    carbs: 55,
     ingredients: [
-      { product_name: 'Гречка', quantity: 80, unit: 'г' },
-      { product_name: 'Макарони', quantity: 80, unit: 'г' },
-      { product_name: 'Твердий сир', quantity: 30, unit: 'г' },
-      { product_name: 'Масло вершкове', quantity: 10, unit: 'г' },
+      { product_name: 'Гречка', quantity: 130, unit: 'г' },
+      { product_name: 'Куряче філе', quantity: 180, unit: 'г' },
+      { product_name: 'Гриби печериці', quantity: 120, unit: 'г' },
+      { product_name: 'Цибуля', quantity: 50, unit: 'г' },
+      { product_name: 'Оливкова олія', quantity: 10, unit: 'мл' },
     ],
-    prep_time: 20,
-    instructions: 'Зварити гречку та макарони. Змішати з маслом та натертим сиром.',
-    required_products: ['Гречка', 'Макарони'],
+    prep_time: 25,
+    instructions: 'Зварити гречку. Обсмажити курку смужками з цибулею і грибами. Подати на гречці.',
+    required_products: ['Гречка', 'Куряче філе'],
   },
 
   // ДОДАТКОВІ РЕЦЕПТИ
@@ -970,11 +972,11 @@ export const recipesDatabase: Recipe[] = [
     ingredients: [
       { product_name: 'Яйця', quantity: 3, unit: 'шт' },
       { product_name: 'Шпинат', quantity: 80, unit: 'г' },
-      { product_name: 'Твердий сир', quantity: 30, unit: 'г' },
+      { product_name: 'Фета', quantity: 40, unit: 'г' },
       { product_name: 'Оливкова олія', quantity: 10, unit: 'мл' },
     ],
     prep_time: 12,
-    instructions: 'Збити яйця з сіллю. Злегка обсмажити шпинат, залити яйцями, посипати подрібненим сиром.',
+    instructions: 'Збити яйця з сіллю. Злегка обсмажити шпинат, залити яйцями, розкришити фету зверху.',
     required_products: ['Яйця'],
   },
   {

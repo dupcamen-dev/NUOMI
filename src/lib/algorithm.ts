@@ -80,8 +80,7 @@ function scoreRecipe(
   targetCalories: number,
   mealType: string,
   recentRecipeIds: string[],
-  ingredientUsage: Map<string, number>,
-  remainingProducts: Map<string, number>
+  ingredientUsage: Map<string, number>
 ): number {
   let score = 0;
   const userProductNames = new Set(userProducts.map(p => p.product.name));
@@ -96,8 +95,7 @@ function scoreRecipe(
   let missingCount = 0;
 
   for (const name of mainIngredients) {
-    const remaining = remainingProducts.get(name) || 0;
-    if (userProductNames.has(name) && remaining > 0) {
+    if (userProductNames.has(name)) {
       availableCount++;
     } else {
       missingCount++;
@@ -119,30 +117,11 @@ function scoreRecipe(
   return score;
 }
 
-function buildMeal(
-  recipe: Recipe,
-  targetCalories: number,
-  userProducts: UserProduct[],
-  remainingProducts: Map<string, number>
-): Meal {
-  const userProductNames = new Set(userProducts.map(p => p.product.name));
-
-  // Calculate base calories from ingredients user actually has (respecting remaining amounts)
-  let baseCalories = 0;
-  recipe.ingredients.forEach(ing => {
-    if (userProductNames.has(ing.product_name) || PANTRY_STAPLES.has(ing.product_name)) {
-      const product = productsDatabase.find(p => p.name === ing.product_name);
-      if (product) {
-        const remainingGrams = remainingProducts.get(ing.product_name) || Infinity;
-        const neededGrams = toGrams(ing.quantity, ing.unit, ing.product_name);
-        const actualGrams = Math.min(neededGrams, remainingGrams);
-        baseCalories += (product.calories_per_100g * actualGrams) / 100;
-      }
-    }
-  });
-
-  // Scale factor: how much of the recipe can we actually make
-  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, 1.5) : 1;
+// Build a meal at FULL portion size (no capping by fridge stock), scaled toward
+// the meal calorie target so the user gets a complete, filling portion. Missing
+// ingredients are later filled via the shopping list.
+function buildMeal(recipe: Recipe, targetCalories: number): Meal {
+  const factor = Math.min(targetCalories / recipe.calories, 1.5);
 
   const ingredientsUsed: { product_name: string; quantity: number; unit: string }[] = [];
   let actualProtein = 0;
@@ -151,36 +130,33 @@ function buildMeal(
   let actualCalories = 0;
 
   recipe.ingredients.forEach(ing => {
-    if (userProductNames.has(ing.product_name) || PANTRY_STAPLES.has(ing.product_name)) {
-      const product = productsDatabase.find(p => p.name === ing.product_name);
-      if (product) {
-        const remainingGrams = remainingProducts.get(ing.product_name) || Infinity;
-        const neededGrams = toGrams(ing.quantity, ing.unit, ing.product_name) * factor;
-        const actualGrams = Math.min(neededGrams, remainingGrams);
+    const product = productsDatabase.find(p => p.name === ing.product_name);
+    // Pantry-only names (Сіль, Спеції…) have no product nutrition entry
+    if (!product) return;
 
-        // Convert back to original unit for display
-        let displayQty: number;
-        if (ing.unit === 'шт') {
-          const unitWeight = UNIT_WEIGHTS[ing.product_name] || 100;
-          displayQty = Math.round(actualGrams / unitWeight);
-          if (displayQty < 1 && actualGrams > 0) displayQty = 1;
-        } else {
-          displayQty = Math.round(actualGrams);
-        }
+    const neededGrams = toGrams(ing.quantity, ing.unit, ing.product_name) * factor;
 
-        if (displayQty > 0) {
-          ingredientsUsed.push({
-            product_name: ing.product_name,
-            quantity: displayQty,
-            unit: ing.unit,
-          });
+    // Convert back to original unit for display
+    let displayQty: number;
+    if (ing.unit === 'шт') {
+      const unitWeight = UNIT_WEIGHTS[ing.product_name] || 100;
+      displayQty = Math.round(neededGrams / unitWeight);
+      if (displayQty < 1 && neededGrams > 0) displayQty = 1;
+    } else {
+      displayQty = Math.round(neededGrams);
+    }
 
-          actualCalories += (product.calories_per_100g * actualGrams) / 100;
-          actualProtein += (product.protein * actualGrams) / 100;
-          actualFat += (product.fat * actualGrams) / 100;
-          actualCarbs += (product.carbs * actualGrams) / 100;
-        }
-      }
+    if (displayQty > 0) {
+      ingredientsUsed.push({
+        product_name: ing.product_name,
+        quantity: displayQty,
+        unit: ing.unit,
+      });
+
+      actualCalories += (product.calories_per_100g * neededGrams) / 100;
+      actualProtein += (product.protein * neededGrams) / 100;
+      actualFat += (product.fat * neededGrams) / 100;
+      actualCarbs += (product.carbs * neededGrams) / 100;
     }
   });
 
@@ -194,21 +170,44 @@ function buildMeal(
   };
 }
 
+// Convert a shortfall/leftover amount in grams back to a display-friendly
+// quantity + unit for the product.
+function gramsToDisplay(
+  name: string,
+  grams: number
+): { quantity: number; unit: string } {
+  const product = productsDatabase.find(p => p.name === name);
+  const unit = product ? product.default_unit : 'г';
+
+  let qty: number;
+  if (unit === 'шт') {
+    const uw = UNIT_WEIGHTS[name] || 100;
+    qty = Math.max(1, Math.round(grams / uw));
+  } else if (unit === 'кг') {
+    qty = Math.round((grams / 1000) * 10) / 10;
+  } else {
+    qty = Math.round(grams);
+  }
+  return { quantity: qty, unit };
+}
+
 export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
   const { products, dailyCalories, mealCount } = state;
   const mealDistribution = MEAL_TYPE_MAP[mealCount] || MEAL_TYPE_MAP[3];
   const availableRecipes = getAvailableRecipes(products);
 
-  // Track remaining products in grams
-  const remainingProducts = new Map<string, number>();
+  // Available stock in grams (fixed for the whole week)
+  const availableGrams = new Map<string, number>();
   products.forEach(up => {
-    remainingProducts.set(up.product.name, toGrams(up.quantity, up.unit, up.product.name));
+    availableGrams.set(up.product.name, toGrams(up.quantity, up.unit, up.product.name));
   });
+
+  // Total needed grams per product across the whole week (full portions)
+  const totalNeededGrams = new Map<string, number>();
 
   const weeklyMenu: DayMenu[] = [];
   const recentRecipeIds: string[] = [];
   const ingredientUsage = new Map<string, number>();
-  const totalShoppingList = new Map<string, { quantity: number; unit: string }>();
 
   for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
     const dayMeals: Meal[] = [];
@@ -220,7 +219,7 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
         .filter(r => r.meal_type === mealType.type)
         .map(r => ({
           recipe: r,
-          score: scoreRecipe(r, products, targetMealCalories, mealType.type, recentRecipeIds, ingredientUsage, remainingProducts),
+          score: scoreRecipe(r, products, targetMealCalories, mealType.type, recentRecipeIds, ingredientUsage),
         }))
         .sort((a, b) => b.score - a.score);
 
@@ -228,7 +227,7 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
         scoredRecipes = availableRecipes
           .map(r => ({
             recipe: r,
-            score: scoreRecipe(r, products, targetMealCalories, mealType.type, recentRecipeIds, ingredientUsage, remainingProducts) - 15,
+            score: scoreRecipe(r, products, targetMealCalories, mealType.type, recentRecipeIds, ingredientUsage) - 15,
           }))
           .sort((a, b) => b.score - a.score);
       }
@@ -236,26 +235,12 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
       if (scoredRecipes.length === 0) continue;
 
       const best = scoredRecipes[0];
-      const meal = buildMeal(best.recipe, targetMealCalories, products, remainingProducts);
+      const meal = buildMeal(best.recipe, targetMealCalories);
 
-      // Deduct used ingredients from remaining
+      // Track total needed grams for the week
       meal.ingredients_used.forEach(ing => {
-        const remaining = remainingProducts.get(ing.product_name) || 0;
-        const usedGrams = toGrams(ing.quantity, ing.unit, ing.product_name);
-        remainingProducts.set(ing.product_name, Math.max(0, remaining - usedGrams));
-      });
-
-      // Track missing ingredients for shopping list
-      const userProductNames = new Set(products.map(p => p.product.name));
-      best.recipe.ingredients.forEach(ing => {
-        if (!userProductNames.has(ing.product_name)) {
-          const existing = totalShoppingList.get(ing.product_name);
-          if (existing) {
-            existing.quantity += ing.quantity;
-          } else {
-            totalShoppingList.set(ing.product_name, { quantity: ing.quantity, unit: ing.unit });
-          }
-        }
+        const grams = toGrams(ing.quantity, ing.unit, ing.product_name);
+        totalNeededGrams.set(ing.product_name, (totalNeededGrams.get(ing.product_name) || 0) + grams);
       });
 
       meal.ingredients_used.forEach(ing => {
@@ -276,27 +261,34 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
     });
   }
 
-  // Leftovers from remaining
-  const leftovers = products
-    .map(up => {
-      const remaining = remainingProducts.get(up.product.name) || 0;
-      const leftGrams = remaining;
-      if (leftGrams > 10) {
-        return {
-          product_name: up.product.name,
-          quantity: Math.round(leftGrams),
-          unit: up.unit === 'кг' ? 'г' : up.unit,
-        };
-      }
-      return null;
-    })
-    .filter(Boolean) as { product_name: string; quantity: number; unit: string }[];
-
-  const shopping_list = Array.from(totalShoppingList.entries()).map(([name, data]) => ({
+  // Shopping list = every ingredient needed for the week minus what's in stock,
+  // so the swap covers the FULL required quantity of each product.
+  const shopping = new Map<string, { quantity: number; unit: string }>();
+  totalNeededGrams.forEach((needed, name) => {
+    const avail = availableGrams.get(name) || 0;
+    const shortfall = needed - avail;
+    if (shortfall <= 0) return;
+    const display = gramsToDisplay(name, shortfall);
+    shopping.set(name, { quantity: display.quantity, unit: display.unit });
+  });
+  const shopping_list = Array.from(shopping.entries()).map(([name, data]) => ({
     product_name: name,
     quantity: data.quantity,
     unit: data.unit,
   }));
+
+  // Leftovers from remaining stock
+  const leftovers: { product_name: string; quantity: number; unit: string }[] = [];
+  availableGrams.forEach((avail, name) => {
+    const needed = totalNeededGrams.get(name) || 0;
+    const leftGrams = avail - needed;
+    if (leftGrams > 10) {
+      const display = gramsToDisplay(name, leftGrams);
+      if (display.quantity > 0) {
+        leftovers.push({ product_name: name, quantity: display.quantity, unit: display.unit });
+      }
+    }
+  });
 
   return { days: weeklyMenu, leftovers, shopping_list };
 }
