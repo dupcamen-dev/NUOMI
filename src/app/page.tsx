@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { I18nProvider } from '@/lib/I18nContext';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import MealGenerator from '@/components/MealGenerator';
@@ -15,11 +14,7 @@ import { GeneratorState, WeeklyMenu as WeeklyMenuType } from '@/lib/types';
 import { generateWeeklyMenu } from '@/lib/algorithm';
 
 export default function Home() {
-  return (
-    <I18nProvider>
-      <HomeContent />
-    </I18nProvider>
-  );
+  return <HomeContent />;
 }
 
 function HomeContent() {

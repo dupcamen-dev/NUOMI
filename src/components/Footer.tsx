@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useI18n } from '@/lib/I18nContext';
 
 export default function Footer() {
@@ -13,9 +14,10 @@ export default function Footer() {
         </div>
         <div className="flex items-center gap-5 sm:gap-6 text-[11px] sm:text-[12px] text-neutral-400 font-light">
           <a href="https://millionpixels.dev" target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors">Designed &amp; Built by Million Pixels</a>
-          <a href="#" className="hover:text-black transition-colors">Privacy</a>
-          <a href="#" className="hover:text-black transition-colors">Terms</a>
-          <a href="#" className="hover:text-black transition-colors">Contact</a>
+          <Link href="/privacy" className="hover:text-black transition-colors">{t('footer.privacy')}</Link>
+          <Link href="/terms" className="hover:text-black transition-colors">{t('footer.terms')}</Link>
+          <Link href="/contact" className="hover:text-black transition-colors">{t('footer.contact')}</Link>
+          <Link href="/donate" className="hover:text-black transition-colors">{t('footer.donate')}</Link>
         </div>
       </div>
     </footer>
