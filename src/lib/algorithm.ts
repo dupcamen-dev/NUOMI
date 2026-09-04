@@ -136,9 +136,10 @@ function buildMeal(recipe: Recipe, targetCalories: number): Meal {
   // hardcoded recipe.calories) so the scale factor is accurate.
   const baseCalories = getRecipeCalories(recipe);
 
-  // Scale to target — allow generous scaling so high-calorie targets are met.
-  // Daily total is clamped in a post-pass so it never exceeds dailyCalories.
-  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, 1.5) : 1;
+  // Adaptive scaling: higher daily targets allow more generous per-meal scaling.
+  // Cap = targetCalories / 300 (a "typical" recipe base), min 1.5, max 3.0.
+  const adaptiveCap = Math.max(1.5, Math.min(3.0, targetCalories / 300));
+  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, adaptiveCap) : 1;
 
   const ingredientsUsed: { product_name: string; quantity: number; unit: string }[] = [];
   let actualProtein = 0;
