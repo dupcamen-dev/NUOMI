@@ -73,7 +73,7 @@ export default function AdminPage() {
   const pagesSorted = stats ? Object.entries(stats.pages).sort((a, b) => b[1] - a[1]) : [];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fafafa] px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       {authed === null && (
         <div className="w-full max-w-[380px] bg-white border border-black/[0.06] rounded-[24px] p-6 sm:p-8 shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_24px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 mb-6">

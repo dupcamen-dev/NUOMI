@@ -56,11 +56,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#fafafa" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body className="min-h-full flex flex-col">
-        <I18nProvider>
-          <VisitorTracker />
-          {children}
-        </I18nProvider>
+      <body className="min-h-full flex flex-col relative overflow-x-hidden">
+        <div
+          className="site-bg pointer-events-none fixed inset-0 overflow-hidden"
+          aria-hidden="true"
+        >
+          <div className="site-bg-grad" />
+          <div className="site-bg-grid" />
+        </div>
+        <div className="relative z-[1] flex min-h-full flex-1 flex-col">
+          <I18nProvider>
+            <VisitorTracker />
+            {children}
+          </I18nProvider>
+        </div>
       </body>
     </html>
   );

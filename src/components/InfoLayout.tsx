@@ -8,7 +8,7 @@ export default function InfoLayout({ children }: { children: ReactNode }) {
   const { locale, setLocale, t } = useI18n();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafa]">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <header className="px-4 sm:px-5 h-14 sm:h-[60px] border-b border-black/[0.04] bg-white/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-[760px] mx-auto h-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">

@@ -1,16 +1,21 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
-const STORAGE_KEY = 'nouri_vid';
+const VID_KEY = 'nouri_vid';
+const VIEWED_KEY = 'nouri_viewed';
 const HEARTBEAT_MS = 60 * 1000;
 
 function getVisitorId(): string {
   if (typeof window === 'undefined') return 'noscript';
-  let id = localStorage.getItem(STORAGE_KEY);
+  let id = localStorage.getItem(VID_KEY);
   if (!id) {
-    id = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem(STORAGE_KEY, id);
+    id = (crypto as Crypto | undefined)?.randomUUID?.() || Math.random().toString(36).slice(2) + Date.now().toString(36);
+    try {
+      localStorage.setItem(VID_KEY, id);
+    } catch {
+      // storage blocked (e.g. private mode) — fall back to per-session id
+    }
   }
   return id;
 }
@@ -29,28 +34,33 @@ function fire(visitorId: string, type: 'view' | 'heartbeat') {
   }
 }
 
+// Counts exactly ONE view per browser tab/session. Re-visits, refreshes and
+// in-page navigation within the same tab do NOT add new "views" — only the
+// heartbeat keeps the visitor marked as active.
 export default function VisitorTracker() {
-  const lastPath = useRef<string>('');
-
   useEffect(() => {
     const id = getVisitorId();
-    lastPath.current = window.location.pathname;
-    fire(id, 'view');
 
-    // Fire a "view" whenever the path changes (client-side navigation).
-    const checkPath = () => {
-      if (window.location.pathname !== lastPath.current) {
-        lastPath.current = window.location.pathname;
-        fire(id, 'view');
+    let alreadyViewed = false;
+    try {
+      alreadyViewed = sessionStorage.getItem(VIEWED_KEY) === '1';
+    } catch {
+      // storage blocked — treat as not viewed so we still count once
+    }
+
+    if (!alreadyViewed) {
+      try {
+        sessionStorage.setItem(VIEWED_KEY, '1');
+      } catch {
+        // ignore
       }
-    };
-    const pathObserver = setInterval(checkPath, 1500);
+      fire(id, 'view');
+    } else {
+      fire(id, 'heartbeat');
+    }
 
-    // Heartbeats only refresh the "active" window — never a new view.
     const heartbeat = setInterval(() => fire(id, 'heartbeat'), HEARTBEAT_MS);
-
     return () => {
-      clearInterval(pathObserver);
       clearInterval(heartbeat);
     };
   }, []);
