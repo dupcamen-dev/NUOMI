@@ -1,5 +1,28 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Адмін-панель (/admin)
+
+Вхід за паролем (з `env`: `ADMIN_PASSWORD`, за замовчуванням `nouri2026`).
+Дашборд показує: активні відвідувачі зараз (heartbeat 15 хв), всього переглядів,
+унікальні відвідувачі та розбивка по сторінках. Оновлюється кожні 30 секунд.
+
+## Сховище аналітики (Upstash Redis)
+
+Для реальної статистики з різних пристроїв потрібна база даних. Рекомендована
+інтеграція у Vercel: **Upstash Redis** (Marketplace). Вона автоматично задає
+`UPSTASH_REDIS_REST_URL` і `UPSTASH_REDIS_REST_TOKEN`. Без неї сервіс працює в
+режимі in-memory fallback (одна інстанція, не спільна між серверлесними копіями).
+
+Змінні середовища (див. `.env.example`):
+
+| Змінна | Опис |
+| --- | --- |
+| `UPSTASH_REDIS_REST_URL` | URL REST API Upstash Redis |
+| `UPSTASH_REDIS_REST_TOKEN` | REST токен Upstash Redis |
+| `ADMIN_PASSWORD` | Пароль /admin (default `nouri2026`) |
+| `ADMIN_SECRET` | Секрет для підпису сесійного cookie адміна |
+
+
 ## Getting Started
 
 First, run the development server:

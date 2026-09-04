@@ -41,6 +41,9 @@ export default function Navbar({ generatorRef }: Props) {
           <a href="#how-it-works" className="text-[13px] font-light text-neutral-500 hover:text-black transition-colors duration-300">
             {t('nav.how')}
           </a>
+          <a href="/donate" className="text-[13px] font-light text-neutral-500 hover:text-black transition-colors duration-300">
+            {t('footer.donate')}
+          </a>
           <button
             onClick={scrollToGenerator}
             className="text-[13px] font-medium bg-black text-white px-5 py-2 rounded-full hover:bg-neutral-800 transition-all duration-300 active:scale-[0.97]"
@@ -79,6 +82,13 @@ export default function Navbar({ generatorRef }: Props) {
             className="block text-[14px] font-light text-neutral-500 py-3"
           >
             {t('nav.how')}
+          </a>
+          <a
+            href="/donate"
+            onClick={() => setMobileOpen(false)}
+            className="block text-[14px] font-light text-neutral-500 py-3"
+          >
+            {t('footer.donate')}
           </a>
           <button
             onClick={scrollToGenerator}
