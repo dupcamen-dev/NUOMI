@@ -3,11 +3,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Lock, RefreshCw, LogOut, Users, Eye, BarChart3, Database } from 'lucide-react';
 
+type Daily = { day: string; views: number; unique: number };
+
 type Stats = {
   activeVisitors: number;
   totalViews: number;
   uniqueVisitors: number;
   pages: Record<string, number>;
+  daily: Daily[];
 };
 
 export default function AdminPage() {
@@ -163,6 +166,37 @@ export default function AdminPage() {
               <div className="text-[24px] font-medium tracking-[-0.02em]">{stats.uniqueVisitors}</div>
               <div className="text-[10px] text-neutral-400 uppercase tracking-wider mt-0.5">Унікальних</div>
             </div>
+          </div>
+
+          <div className="bg-white border border-black/[0.05] rounded-[20px] p-5 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-[14px] font-medium tracking-[-0.01em]">Відвідування по датах</h2>
+              <span className="text-[11px] text-neutral-400">останні 30 днів</span>
+            </div>
+            {stats.daily.length === 0 || stats.daily.every(d => d.views === 0) ? (
+              <p className="text-[13px] text-neutral-400 font-light">Ще немає даних</p>
+            ) : (
+              <div className="flex items-end gap-[3px] h-[140px]">
+                {stats.daily.map(d => {
+                  const max = Math.max(...stats.daily.map(x => x.views), 1);
+                  const h = Math.round((d.views / max) * 100);
+                  const today = d.day;
+                  const isToday = today === stats.daily[stats.daily.length - 1]?.day;
+                  return (
+                    <div
+                      key={d.day}
+                      className="flex-1 flex flex-col justify-end items-center group relative"
+                      title={`${d.day}: ${d.views} переглядів, ${d.unique} унікальних`}
+                    >
+                      <div
+                        className={`w-full rounded-t-[3px] transition-all ${isToday ? 'bg-[#111]' : 'bg-neutral-300 group-hover:bg-neutral-500'}`}
+                        style={{ height: `${Math.max(h, 3)}%` }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="bg-white border border-black/[0.05] rounded-[20px] p-5">

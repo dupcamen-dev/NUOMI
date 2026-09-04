@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const STORAGE_KEY = 'nouri_vid';
 const HEARTBEAT_MS = 60 * 1000;
@@ -15,13 +15,13 @@ function getVisitorId(): string {
   return id;
 }
 
-function fire(visitorId: string) {
+function fire(visitorId: string, type: 'view' | 'heartbeat') {
   const path = window.location.pathname;
   try {
     fetch('/api/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ visitorId, path }),
+      body: JSON.stringify({ visitorId, path, type }),
       keepalive: true,
     }).catch(() => {});
   } catch {
@@ -30,11 +30,29 @@ function fire(visitorId: string) {
 }
 
 export default function VisitorTracker() {
+  const lastPath = useRef<string>('');
+
   useEffect(() => {
     const id = getVisitorId();
-    fire(id);
-    const interval = setInterval(() => fire(id), HEARTBEAT_MS);
-    return () => clearInterval(interval);
+    lastPath.current = window.location.pathname;
+    fire(id, 'view');
+
+    // Fire a "view" whenever the path changes (client-side navigation).
+    const checkPath = () => {
+      if (window.location.pathname !== lastPath.current) {
+        lastPath.current = window.location.pathname;
+        fire(id, 'view');
+      }
+    };
+    const pathObserver = setInterval(checkPath, 1500);
+
+    // Heartbeats only refresh the "active" window — never a new view.
+    const heartbeat = setInterval(() => fire(id, 'heartbeat'), HEARTBEAT_MS);
+
+    return () => {
+      clearInterval(pathObserver);
+      clearInterval(heartbeat);
+    };
   }, []);
 
   return null;

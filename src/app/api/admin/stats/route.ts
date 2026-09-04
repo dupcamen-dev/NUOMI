@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const totalViews = await store.totalViews();
   const uniqueVisitors = await store.uniqueVisitors();
   const pages = await store.pageCounts();
+  const daily = await store.dailySeries(30);
 
   return Response.json({
     ok: true,
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
       totalViews,
       uniqueVisitors,
       pages,
+      daily,
     },
   });
 }

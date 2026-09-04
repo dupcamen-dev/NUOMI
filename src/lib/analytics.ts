@@ -63,6 +63,17 @@ async function ensureSchema() {
           visitor_id TEXT PRIMARY KEY,
           last_seen BIGINT NOT NULL
         )`;
+        await db`CREATE TABLE IF NOT EXISTS daily_views (
+          day TEXT NOT NULL,
+          path TEXT NOT NULL,
+          views BIGINT NOT NULL DEFAULT 0,
+          PRIMARY KEY (day, path)
+        )`;
+        await db`CREATE TABLE IF NOT EXISTS daily_visitors (
+          day TEXT NOT NULL,
+          visitor_id TEXT NOT NULL,
+          PRIMARY KEY (day, visitor_id)
+        )`;
         return true;
       } catch (e) {
         console.error('analytics: schema init failed', e);
@@ -93,6 +104,29 @@ async function incrPage(pathKey: string, by = 1): Promise<number> {
   return Number(rows[0]?.count || 0);
 }
 
+async function recordDailyView(day: string, pathKey: string, by = 1): Promise<void> {
+  const db = getSql();
+  await db`
+    INSERT INTO daily_views (day, path, views) VALUES (${day}, ${pathKey}, ${by})
+    ON CONFLICT (day, path) DO UPDATE SET views = daily_views.views + ${by}
+  `;
+}
+
+async function recordDailyVisitor(day: string, visitorId: string): Promise<void> {
+  const db = getSql();
+  await db`
+    INSERT INTO daily_visitors (day, visitor_id) VALUES (${day}, ${visitorId})
+    ON CONFLICT (day, visitor_id) DO NOTHING
+  `;
+}
+
+function dayKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 // ---- Unified API used by route handlers ----
 
 export type Store = {
@@ -106,6 +140,8 @@ export type Store = {
   totalViews: () => Promise<number>;
   uniqueVisitors: () => Promise<number>;
   pageCounts: () => Promise<Record<string, number>>;
+  recordDaily: (path: string, visitorId: string) => Promise<void>;
+  dailySeries: (days: number) => Promise<{ day: string; views: number; unique: number }[]>;
 };
 
 export function createStore(): Store {
@@ -249,6 +285,76 @@ export function createStore(): Store {
       [...mem.keys()].filter(k => k.startsWith('page:')).forEach(k => {
         out[k.replace(/^page:/, '')] = Number(mem.get(k) || 0);
       });
+      return out;
+    },
+
+    async recordDaily(path, visitorId) {
+      const day = dayKey(new Date());
+      if (usePg) {
+        await ensureSchema();
+        await Promise.all([
+          recordDailyView(day, path),
+          recordDailyVisitor(day, visitorId),
+        ]).catch(() => {});
+        return;
+      }
+      const viewsKey = `dview:${day}`;
+      memIncr(viewsKey);
+      let set = memSets.get(`duniq:${day}`);
+      if (!set) {
+        set = new Set();
+        memSets.set(`duniq:${day}`, set);
+      }
+      set.add(visitorId);
+    },
+
+    async dailySeries(days) {
+      const out: { day: string; views: number; unique: number }[] = [];
+      const now = new Date();
+      if (usePg) {
+        try {
+          await ensureSchema();
+          const db = getSql();
+          const start = new Date(now);
+          start.setDate(start.getDate() - (days - 1));
+          const startDay = dayKey(start);
+          const viewsRows = await db`
+            SELECT day, SUM(views)::int AS views FROM daily_views
+            WHERE day >= ${startDay} GROUP BY day ORDER BY day
+          `;
+          const uniqueRows = await db`
+            SELECT day, COUNT(*)::int AS unique FROM daily_visitors
+            WHERE day >= ${startDay} GROUP BY day ORDER BY day
+          `;
+          const viewsMap: Record<string, number> = {};
+          const uniqueMap: Record<string, number> = {};
+          for (const r of viewsRows as { day?: string; views?: unknown }[]) {
+            if (r.day) viewsMap[r.day] = Number(r.views || 0);
+          }
+          for (const r of uniqueRows as { day?: string; unique?: unknown }[]) {
+            if (r.day) uniqueMap[r.day] = Number(r.unique || 0);
+          }
+          for (let i = 0; i < days; i++) {
+            const d = new Date(start);
+            d.setDate(d.getDate() + i);
+            const key = dayKey(d);
+            out.push({ day: key, views: viewsMap[key] || 0, unique: uniqueMap[key] || 0 });
+          }
+          return out;
+        } catch {
+          return out;
+        }
+      }
+      for (let i = 0; i < days; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (days - 1 - i));
+        const key = dayKey(d);
+        out.push({
+          day: key,
+          views: Number(memGet(`dview:${key}`) || 0),
+          unique: memSets.get(`duniq:${key}`)?.size || 0,
+        });
+      }
       return out;
     },
   };
