@@ -85,6 +85,9 @@ export const RECIPE_NAMES: Record<string, Record<Locale, string>> = {
   baked_beet_feta: { uk: 'Запечений буряк ізі фетою', de: 'Gebackene Rote Bete mit Feta' },
   asparagus_greenbeans: { uk: 'Спаржа із зеленою квасолею і яйцем', de: 'Spargel mit grünen Bohnen und Ei' },
   cod_mushroom: { uk: 'Треска ізі грибами', de: 'Kabeljau mit Champignons' },
+  chicken_noodle_soup: { uk: 'Курячий суп з локшиною', de: 'Hähnchen-Nudelsuppe' },
+  veggie_buckwheat_soup: { uk: 'Гречаний суп з овочами', de: 'Buchweizensuppe mit Gemüse' },
+  creamy_mushroom_soup: { uk: 'Грибний суп з картоплею', de: 'Cremige Pilzsuppe mit Kartoffeln' },
 };
 
 export function recipeName(id: string, locale: Locale, fallback: string): string {
@@ -175,6 +178,9 @@ const RECIPE_INSTRUCTIONS_DE: Record<string, string> = {
   baked_beet_feta: 'Rote Bete bei 200° 30 Minuten backen. Feta darüberbröckeln und mit Öl beträufeln.',
   asparagus_greenbeans: 'Spargel und grüne Bohnen kochen. Eier braten. Gemüse mit dem Ei servieren.',
   cod_mushroom: 'Kabeljau und Champignons bei 190° 20 Minuten backen. Mit Zitrone beträufeln.',
+  chicken_noodle_soup: 'Hähnchen 30 Minuten in Wasser kochen. Geriebene Karotte und Kartoffelwürfel dazugeben und 15 Minuten kochen. Nudeln hinzufügen und 8 Minuten garen. Salzen.',
+  veggie_buckwheat_soup: 'Champignons und Karotte anbraten. Mit Wasser aufgießen, Kartoffelwürfel und Buchweizen dazugeben. 20 Minuten kochen. Salzen.',
+  creamy_mushroom_soup: 'Champignons anbraten. Kartoffelwürfel und Wasser dazugeben, 20 Minuten kochen. Zum Schluss saure Sahne hinzufügen, salzen und mit dem Stabmixer cremig pürieren.',
 };
 
 export function recipeInstructions(id: string, locale: Locale, fallback: string): string {
