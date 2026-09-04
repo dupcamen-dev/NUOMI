@@ -62,6 +62,17 @@ function getMainIngredients(recipe: Recipe): string[] {
     .filter(name => !PANTRY_STAPLES.has(name));
 }
 
+// Compute actual calories from the product database for a recipe's ingredients.
+function getRecipeCalories(recipe: Recipe): number {
+  let total = 0;
+  recipe.ingredients.forEach(ing => {
+    const product = productsDatabase.find(p => p.name === ing.product_name);
+    if (!product) return;
+    total += (product.calories_per_100g * toGrams(ing.quantity, ing.unit, ing.product_name)) / 100;
+  });
+  return total;
+}
+
 function getAvailableRecipes(
   userProducts: UserProduct[]
 ): Recipe[] {
@@ -87,7 +98,7 @@ function scoreRecipe(
 
   if (recipe.meal_type === mealType) score += 30;
 
-  const calDiff = Math.abs(recipe.calories - targetCalories);
+  const calDiff = Math.abs(getRecipeCalories(recipe) - targetCalories);
   score += Math.max(0, 30 - calDiff / 10);
 
   const mainIngredients = getMainIngredients(recipe);
@@ -121,7 +132,12 @@ function scoreRecipe(
 // the meal calorie target so the user gets a complete, filling portion. Missing
 // ingredients are later filled via the shopping list.
 function buildMeal(recipe: Recipe, targetCalories: number): Meal {
-  const factor = Math.min(targetCalories / recipe.calories, 1.5);
+  // Compute base calories from actual product database values (not the
+  // hardcoded recipe.calories) so the scale factor is accurate.
+  const baseCalories = getRecipeCalories(recipe);
+
+  // Scale to target but never exceed it — daily total stays ≤ dailyCalories.
+  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, 1.0) : 1;
 
   const ingredientsUsed: { product_name: string; quantity: number; unit: string }[] = [];
   let actualProtein = 0;
