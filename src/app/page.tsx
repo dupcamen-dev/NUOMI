@@ -10,6 +10,7 @@ import WeeklyMenu from '@/components/WeeklyMenu';
 import HowItWorks from '@/components/HowItWorks';
 import FinalCTA from '@/components/FinalCTA';
 import Footer from '@/components/Footer';
+import SplashScreen from '@/components/SplashScreen';
 import { GeneratorState, WeeklyMenu as WeeklyMenuType } from '@/lib/types';
 import { generateWeeklyMenu } from '@/lib/algorithm';
 
@@ -22,6 +23,7 @@ export default function Home() {
 }
 
 function HomeContent() {
+  const [splashDone, setSplashDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<WeeklyMenuType | null>(null);
   const [lastState, setLastState] = useState<GeneratorState | null>(null);
@@ -53,6 +55,7 @@ function HomeContent() {
 
   return (
     <main className="flex-1">
+      {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
       <Navbar generatorRef={generatorRef} />
       <Hero />
       <div ref={generatorRef}>
