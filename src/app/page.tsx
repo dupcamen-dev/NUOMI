@@ -66,7 +66,13 @@ function HomeContent() {
         {loading && <LoadingState onDone={handleLoadingDone} />}
 
         {result && lastState && (
-          <WeeklyMenu menu={result} dailyCalories={lastState.dailyCalories} userProducts={lastState.products} />
+          <WeeklyMenu
+            menu={result}
+            dailyCalories={lastState.dailyCalories}
+            userProducts={lastState.products}
+            people={lastState.people || 1}
+            calories2={lastState.calories2}
+          />
         )}
       </div>
 

@@ -209,8 +209,23 @@ function gramsToDisplay(
   return { quantity: qty, unit };
 }
 
+function clampDay(meals: Meal[], targetCalories: number): void {
+  const dayTotal = meals.reduce((sum, m) => sum + m.actual_calories, 0);
+  if (dayTotal > targetCalories && dayTotal > 0) {
+    const reduction = targetCalories / dayTotal;
+    meals.forEach(m => {
+      m.actual_calories = Math.round(m.actual_calories * reduction);
+      m.actual_protein = Math.round(m.actual_protein * reduction);
+      m.actual_fat = Math.round(m.actual_fat * reduction);
+      m.actual_carbs = Math.round(m.actual_carbs * reduction);
+    });
+  }
+}
+
 export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
   const { products, dailyCalories, mealCount } = state;
+  const people = state.people || 1;
+  const dailyCalories2 = people === 2 ? (state.calories2 ?? dailyCalories) : dailyCalories;
   const mealDistribution = MEAL_TYPE_MAP[mealCount] || MEAL_TYPE_MAP[3];
   const availableRecipes = getAvailableRecipes(products);
 
@@ -220,7 +235,10 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
     availableGrams.set(up.product.name, toGrams(up.quantity, up.unit, up.product.name));
   });
 
-  // Total needed grams per product across the whole week (full portions)
+  // The higher target drives dish selection so the menu is generous enough for both.
+  const baseDailyCalories = Math.max(dailyCalories, dailyCalories2);
+
+  // Total needed grams per product across the whole week (BOTH people, full portions)
   const totalNeededGrams = new Map<string, number>();
 
   const weeklyMenu: DayMenu[] = [];
@@ -229,9 +247,10 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
 
   for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
     const dayMeals: Meal[] = [];
+    const dayMeals2: Meal[] = [];
 
     for (const mealType of mealDistribution) {
-      const targetMealCalories = Math.round(dailyCalories * mealType.ratio);
+      const targetMealCalories = Math.round(baseDailyCalories * mealType.ratio);
 
       let scoredRecipes = availableRecipes
         .filter(r => r.meal_type === mealType.type)
@@ -253,41 +272,49 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
       if (scoredRecipes.length === 0) continue;
 
       const best = scoredRecipes[0];
-      const meal = buildMeal(best.recipe, targetMealCalories);
 
-      // Track total needed grams for the week
-      meal.ingredients_used.forEach(ing => {
-        const grams = toGrams(ing.quantity, ing.unit, ing.product_name);
-        totalNeededGrams.set(ing.product_name, (totalNeededGrams.get(ing.product_name) || 0) + grams);
+      // Same recipe, scaled independently for each person's own target.
+      const meal1 = buildMeal(best.recipe, Math.round(dailyCalories * mealType.ratio));
+      let meal2: Meal | null = null;
+      dayMeals.push(meal1);
+
+      if (people === 2) {
+        meal2 = buildMeal(best.recipe, Math.round(dailyCalories2 * mealType.ratio));
+        if (meal2) dayMeals2.push(meal2);
+      }
+
+      // Track total needed grams for the week — sum both people → shopping covers both.
+      const bothMeals = meal2 ? [meal1, meal2] : [meal1];
+      bothMeals.forEach((meal: Meal) => {
+        meal.ingredients_used.forEach(ing => {
+          const grams = toGrams(ing.quantity, ing.unit, ing.product_name);
+          totalNeededGrams.set(ing.product_name, (totalNeededGrams.get(ing.product_name) || 0) + grams);
+        });
       });
 
-      meal.ingredients_used.forEach(ing => {
+      meal1.ingredients_used.forEach(ing => {
         ingredientUsage.set(ing.product_name, (ingredientUsage.get(ing.product_name) || 0) + 1);
       });
 
-      dayMeals.push(meal);
       recentRecipeIds.push(best.recipe.id);
     }
 
-    // Clamp day total to dailyCalories — scale down if over, never add.
-    const dayTotal = dayMeals.reduce((sum, m) => sum + m.actual_calories, 0);
-    if (dayTotal > dailyCalories && dayTotal > 0) {
-      const reduction = dailyCalories / dayTotal;
-      dayMeals.forEach(m => {
-        m.actual_calories = Math.round(m.actual_calories * reduction);
-        m.actual_protein = Math.round(m.actual_protein * reduction);
-        m.actual_fat = Math.round(m.actual_fat * reduction);
-        m.actual_carbs = Math.round(m.actual_carbs * reduction);
-      });
-    }
+    // Clamp each person's day total to their own target — scale down if over.
+    clampDay(dayMeals, dailyCalories);
+    if (people === 2) clampDay(dayMeals2, dailyCalories2);
 
     weeklyMenu.push({
       day: DAYS[dayIndex],
       meals: dayMeals,
+      meals2: dayMeals2,
       total_calories: dayMeals.reduce((sum, m) => sum + m.actual_calories, 0),
       total_protein: Math.round(dayMeals.reduce((sum, m) => sum + m.actual_protein, 0)),
       total_fat: Math.round(dayMeals.reduce((sum, m) => sum + m.actual_fat, 0)),
       total_carbs: Math.round(dayMeals.reduce((sum, m) => sum + m.actual_carbs, 0)),
+      total_calories2: dayMeals2.reduce((sum, m) => sum + m.actual_calories, 0),
+      total_protein2: Math.round(dayMeals2.reduce((sum, m) => sum + m.actual_protein, 0)),
+      total_fat2: Math.round(dayMeals2.reduce((sum, m) => sum + m.actual_fat, 0)),
+      total_carbs2: Math.round(dayMeals2.reduce((sum, m) => sum + m.actual_carbs, 0)),
     });
   }
 
@@ -337,6 +364,7 @@ export function generateDemoMenu(): WeeklyMenu {
     ],
     dailyCalories: 2200,
     mealCount: 4,
+    people: 1,
   };
   return generateWeeklyMenu(demoState);
 }

@@ -18,6 +18,12 @@ export default function MealGenerator({ onGenerate }: Props) {
   const [products, setProducts] = useState<UserProduct[]>([]);
   const [dailyCalories, setDailyCalories] = useState(2200);
   const [mealCount, setMealCount] = useState(4);
+  const [people, setPeople] = useState<1 | 2>(1);
+  const [calories2, setCalories2] = useState(1900);
+
+  const setPeopleSafe = (p: 1 | 2) => {
+    setPeople(p);
+  };
 
   const addProduct = (product: Product) => {
     if (products.find(p => p.product.id === product.id)) return;
@@ -42,7 +48,13 @@ export default function MealGenerator({ onGenerate }: Props) {
 
   const handleGenerate = () => {
     if (products.length === 0) return;
-    onGenerate({ products, dailyCalories, mealCount });
+    onGenerate({
+      products,
+      dailyCalories,
+      mealCount,
+      people,
+      calories2: people === 2 ? calories2 : undefined,
+    });
   };
 
   return (
@@ -80,7 +92,50 @@ export default function MealGenerator({ onGenerate }: Props) {
 
           <div className="border-t border-black/[0.05] my-5 sm:my-6" />
 
+          <div className="mb-5 sm:mb-6">
+            <label className="block text-[11px] sm:text-[12px] font-medium text-neutral-400 mb-2 tracking-[0.08em] uppercase">
+              {t('gen.people')}
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPeopleSafe(1)}
+                className={`flex-1 py-2.5 rounded-2xl text-[13px] sm:text-[14px] font-medium transition-all duration-300 ${
+                  people === 1
+                    ? 'bg-[#0a0a0a] text-white'
+                    : 'bg-transparent text-[#0a0a0a] border border-black/[0.06] hover:border-black/[0.15]'
+                }`}
+              >
+                {t('gen.onePerson')}
+              </button>
+              <button
+                onClick={() => setPeopleSafe(2)}
+                className={`flex-1 py-2.5 rounded-2xl text-[13px] sm:text-[14px] font-medium transition-all duration-300 ${
+                  people === 2
+                    ? 'bg-[#0a0a0a] text-white'
+                    : 'bg-transparent text-[#0a0a0a] border border-black/[0.06] hover:border-black/[0.15]'
+                }`}
+              >
+                {t('gen.twoPeople')}
+              </button>
+            </div>
+            {people === 2 && (
+              <p className="text-[11px] sm:text-[12px] text-neutral-300 font-light mt-2">
+                {t('gen.twoHint')}
+              </p>
+            )}
+          </div>
+
           <CalorieInput value={dailyCalories} onChange={setDailyCalories} />
+
+          {people === 2 && (
+            <div className="mt-5">
+              <CalorieInput
+                value={calories2}
+                onChange={setCalories2}
+                labelKey="gen.calories2"
+              />
+            </div>
+          )}
 
           <div className="mt-5">
             <MealCountSelector value={mealCount} onChange={setMealCount} />

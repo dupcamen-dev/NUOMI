@@ -7,17 +7,20 @@ import { useI18n } from '@/lib/I18nContext';
 interface Props {
   value: number;
   onChange: (v: number) => void;
+  labelKey?: string;
 }
 
-export default function CalorieInput({ value, onChange }: Props) {
+export default function CalorieInput({ value, onChange, labelKey }: Props) {
   const { t } = useI18n();
   const [showCalculator, setShowCalculator] = useState(false);
+
+  const label = labelKey ? t(labelKey) : t('gen.calories');
 
   return (
     <>
       <div>
         <label className="block text-[11px] sm:text-[12px] font-medium text-neutral-400 mb-2 tracking-[0.08em] uppercase">
-          {t('gen.calories')}
+          {label}
         </label>
         <div className="flex items-center gap-3">
           <input

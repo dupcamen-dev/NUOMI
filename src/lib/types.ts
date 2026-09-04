@@ -48,10 +48,15 @@ export interface Meal {
 export interface DayMenu {
   day: string;
   meals: Meal[];
+  meals2: Meal[];
   total_calories: number;
   total_protein: number;
   total_fat: number;
   total_carbs: number;
+  total_calories2: number;
+  total_protein2: number;
+  total_fat2: number;
+  total_carbs2: number;
 }
 
 export interface WeeklyMenu {
@@ -64,4 +69,6 @@ export interface GeneratorState {
   products: UserProduct[];
   dailyCalories: number;
   mealCount: number;
+  people?: 1 | 2;
+  calories2?: number;
 }
