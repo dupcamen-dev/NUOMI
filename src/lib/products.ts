@@ -1,4 +1,4 @@
-import { Product } from './types';
+﻿import { Product } from './types';
 import { Locale } from './translations';
 import { productName } from './recipeTranslations';
 
@@ -104,6 +104,47 @@ export const productsDatabase: Product[] = [
   // Заморожені
   { id: 'frozen_vegetables', name: 'Заморожені овочі', calories_per_100g: 65, protein: 2.5, fat: 0.5, carbs: 13, default_unit: 'г' },
   { id: 'frozen_berries', name: 'Заморожені ягоди', calories_per_100g: 45, protein: 0.8, fat: 0.4, carbs: 11, default_unit: 'г' },
+
+  // ===== ДОДАТКОВІ ПРОДУКТИ =====
+
+  // Сири
+  { id: 'mozzarella', name: 'Моцарела', calories_per_100g: 280, protein: 18, fat: 22, carbs: 2, default_unit: 'г' },
+  { id: 'parmesan', name: 'Пармезан', calories_per_100g: 431, protein: 38, fat: 29, carbs: 0, default_unit: 'г' },
+  { id: 'ricotta', name: 'Рікотта', calories_per_100g: 174, protein: 11, fat: 13, carbs: 3, default_unit: 'г' },
+  { id: 'feta', name: 'Фета', calories_per_100g: 264, protein: 14, fat: 21, carbs: 4, default_unit: 'г' },
+
+  // Риба та морепродукти
+  { id: 'mackerel', name: 'Скумбрія', calories_per_100g: 205, protein: 19, fat: 14, carbs: 0, default_unit: 'г' },
+  { id: 'squid', name: 'Кальмар', calories_per_100g: 92, protein: 16, fat: 1, carbs: 3, default_unit: 'г' },
+  { id: 'mussels', name: 'Мідії', calories_per_100g: 86, protein: 12, fat: 2, carbs: 4, default_unit: 'г' },
+  { id: 'trout', name: 'Форель', calories_per_100g: 148, protein: 21, fat: 6, carbs: 0, default_unit: 'г' },
+
+  // Птиця
+  { id: 'chicken_ground', name: 'Курячий фарш', calories_per_100g: 165, protein: 18, fat: 9, carbs: 0, default_unit: 'г' },
+
+  // Овочі та зелень
+  { id: 'mushrooms', name: 'Гриби печериці', calories_per_100g: 22, protein: 3, fat: 0, carbs: 4, default_unit: 'г' },
+  { id: 'asparagus', name: 'Спаржа', calories_per_100g: 20, protein: 2, fat: 0, carbs: 4, default_unit: 'г' },
+  { id: 'beetroot', name: 'Буряк', calories_per_100g: 43, protein: 1.6, fat: 0.2, carbs: 10, default_unit: 'г' },
+  { id: 'green_beans', name: 'Зелена квасоля', calories_per_100g: 31, protein: 1.8, fat: 0.2, carbs: 7, default_unit: 'г' },
+  { id: 'arugula', name: 'Рукола', calories_per_100g: 25, protein: 2.6, fat: 0.7, carbs: 4, default_unit: 'г' },
+  { id: 'ginger', name: 'Імбир', calories_per_100g: 80, protein: 1.8, fat: 0.8, carbs: 18, default_unit: 'г' },
+
+  // Фрукти та ягоди
+  { id: 'pear', name: 'Груша', calories_per_100g: 57, protein: 0.4, fat: 0.1, carbs: 15, default_unit: 'шт' },
+  { id: 'mango', name: 'Манго', calories_per_100g: 60, protein: 0.8, fat: 0.4, carbs: 15, default_unit: 'шт' },
+  { id: 'raspberry', name: 'Малина', calories_per_100g: 52, protein: 1.2, fat: 0.7, carbs: 12, default_unit: 'г' },
+  { id: 'dates', name: 'Фініки', calories_per_100g: 277, protein: 1.8, fat: 0.2, carbs: 75, default_unit: 'г' },
+
+  // Крупи та бобові
+  { id: 'red_lentils', name: 'Сочевиця червона', calories_per_100g: 116, protein: 9, fat: 0.5, carbs: 20, default_unit: 'г' },
+  { id: 'brown_rice', name: 'Коричневий рис', calories_per_100g: 111, protein: 2.6, fat: 0.9, carbs: 23, default_unit: 'г' },
+  { id: 'tofu', name: 'Тофу', calories_per_100g: 76, protein: 8, fat: 4.8, carbs: 2, default_unit: 'г' },
+  { id: 'semolina', name: 'Манка', calories_per_100g: 120, protein: 3.3, fat: 0.3, carbs: 25, default_unit: 'г' },
+
+  // Горіхи та інше
+  { id: 'pistachios', name: 'Фісташки', calories_per_100g: 562, protein: 20, fat: 45, carbs: 28, default_unit: 'г' },
+  { id: 'coconut_milk', name: 'Кокосове молоко', calories_per_100g: 230, protein: 2, fat: 24, carbs: 6, default_unit: 'мл' },
 ];
 
 export function searchProducts(query: string, locale: Locale = 'uk'): Product[] {
