@@ -112,9 +112,9 @@ input, select, textarea {
   position: absolute;
   inset: -25%;
   background:
-    radial-gradient(60% 60% at 22% 24%, rgba(59, 130, 246, 0.42) 0%, transparent 60%),
-    radial-gradient(55% 60% at 82% 76%, rgba(139, 92, 246, 0.40) 0%, transparent 60%),
-    radial-gradient(45% 55% at 60% 15%, rgba(129, 140, 248, 0.30) 0%, transparent 60%);
+    radial-gradient(60% 60% at 22% 24%, rgba(59, 130, 246, 0.34) 0%, transparent 60%),
+    radial-gradient(55% 60% at 82% 76%, rgba(139, 92, 246, 0.32) 0%, transparent 60%),
+    radial-gradient(45% 55% at 60% 15%, rgba(129, 140, 248, 0.24) 0%, transparent 60%);
   background-size: 160% 160%;
   background-repeat: no-repeat;
   animation: grad-drift 26s ease-in-out infinite;
@@ -125,8 +125,8 @@ input, select, textarea {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(10, 10, 10, 0.16) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10, 10, 10, 0.16) 1px, transparent 1px);
+    linear-gradient(to right, rgba(10, 10, 10, 0.11) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.11) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 95% 85% at 50% 42%, black 28%, transparent 92%);
   -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 42%, black 28%, transparent 92%);
