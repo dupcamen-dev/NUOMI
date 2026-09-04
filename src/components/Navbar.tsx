@@ -28,7 +28,7 @@ export default function Navbar({ generatorRef }: Props) {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#fafafa]/85 backdrop-blur-2xl border-b border-black/[0.04]'
+          ? 'bg-[#fafafa]/70 backdrop-blur-md border-b border-black/[0.04]'
           : 'bg-transparent'
       }`}
     >
@@ -75,7 +75,7 @@ export default function Navbar({ generatorRef }: Props) {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-[#fafafa]/95 backdrop-blur-2xl border-b border-black/[0.04] px-4 pb-5 pt-3 space-y-1 animate-fade-in">
+        <div className="md:hidden bg-[#fafafa]/75 backdrop-blur-md border-b border-black/[0.04] px-4 pb-5 pt-3 space-y-1 animate-fade-in">
           <a
             href="#how-it-works"
             onClick={() => setMobileOpen(false)}
