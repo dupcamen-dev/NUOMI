@@ -136,8 +136,9 @@ function buildMeal(recipe: Recipe, targetCalories: number): Meal {
   // hardcoded recipe.calories) so the scale factor is accurate.
   const baseCalories = getRecipeCalories(recipe);
 
-  // Scale to target but never exceed it — daily total stays ≤ dailyCalories.
-  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, 1.0) : 1;
+  // Scale to target — allow generous scaling so high-calorie targets are met.
+  // Daily total is clamped in a post-pass so it never exceeds dailyCalories.
+  const factor = baseCalories > 0 ? Math.min(targetCalories / baseCalories, 1.5) : 1;
 
   const ingredientsUsed: { product_name: string; quantity: number; unit: string }[] = [];
   let actualProtein = 0;
@@ -265,6 +266,18 @@ export function generateWeeklyMenu(state: GeneratorState): WeeklyMenu {
 
       dayMeals.push(meal);
       recentRecipeIds.push(best.recipe.id);
+    }
+
+    // Clamp day total to dailyCalories — scale down if over, never add.
+    const dayTotal = dayMeals.reduce((sum, m) => sum + m.actual_calories, 0);
+    if (dayTotal > dailyCalories && dayTotal > 0) {
+      const reduction = dailyCalories / dayTotal;
+      dayMeals.forEach(m => {
+        m.actual_calories = Math.round(m.actual_calories * reduction);
+        m.actual_protein = Math.round(m.actual_protein * reduction);
+        m.actual_fat = Math.round(m.actual_fat * reduction);
+        m.actual_carbs = Math.round(m.actual_carbs * reduction);
+      });
     }
 
     weeklyMenu.push({
