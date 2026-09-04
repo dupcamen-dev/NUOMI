@@ -53,7 +53,6 @@ function memSadd(key: string, value: string): number {
     set = new Set();
     memSets.set(key, set);
   }
-  if (set.has(value)) return (mem.get(key) as number) || set.size;
   set.add(value);
   return set.size;
 }

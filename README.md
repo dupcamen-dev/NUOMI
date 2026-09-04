@@ -6,14 +6,38 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 Дашборд показує: активні відвідувачі зараз (heartbeat 15 хв), всього переглядів,
 унікальні відвідувачі та розбивка по сторінках. Оновлюється кожні 30 секунд.
 
-## Сховище аналітики (Upstash Redis)
+## Налаштування Upstash Redis (виробнича статистика)
 
-Для реальної статистики з різних пристроїв потрібна база даних. Рекомендована
-інтеграція у Vercel: **Upstash Redis** (Marketplace). Вона автоматично задає
-`UPSTASH_REDIS_REST_URL` і `UPSTASH_REDIS_REST_TOKEN`. Без неї сервіс працює в
-режимі in-memory fallback (одна інстанція, не спільна між серверлесними копіями).
+Без бази даних сервіс працює у **memory fallback** (одна інстанція — підходить
+тільки для локального тесту). Для реальної крос-пристрійної статистики потрібен
+**Upstash Redis**. Підключення вручну у Vercel:
 
-Змінні середовища (див. `.env.example`):
+### 1. Підключити Upstash у Vercel
+1. У [vercel.com](https://vercel.com) відкрий свій проєкт Nouri.
+2. **Storage → Connect Database → Upstash Redis → Create/Connect.**
+3. Дай дозвіл. Vercel автоматично додасть у env-змінні проєкту:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+4. Потрібно **Re-deploy** (або Vercel запропонує сам), щоб проєкт отримав нові змінні.
+
+### 2. Задати пароль і секрет адміна
+1. У проєкті: **Settings → Environment Variables**.
+2. Додай (Production **і** Preview):
+   - `ADMIN_PASSWORD` = пароль для `/admin`
+   - `ADMIN_SECRET` = будь-який довгий випадковий рядок (для підпису cookie)
+     > Згенерувати: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+3. **Re-deploy** після зміни змінних середовища.
+4. `/admin` тепер показує реальну статистику активних відвідувачів.
+
+### Локальний тест (з Upstash)
+1. Скопіюй `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` з дашборда
+   Upstash у локальний `.env.local` (або встанови змінні середовища).
+2. `npm run dev` → відкрий `/admin`, увійди, перевір статистику.
+
+### Перевірка, яке сховище використовується
+На дашборді `/admin` у шапці показано бейдж: `upstash-redis` або `memory`.
+
+## Змінні середовища
 
 | Змінна | Опис |
 | --- | --- |
